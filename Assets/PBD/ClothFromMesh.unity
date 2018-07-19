@@ -285,7 +285,7 @@ MonoBehaviour:
     y: -85
     z: 0
   DAMPING: 0.96
-  ITERATIONS: 6
+  ITERATIONS: 2
   atoms: []
   positionConstraints: []
   distanceConstraints: []
@@ -319,7 +319,8 @@ MonoBehaviour:
   AtomPrefab: {fileID: 114987411872622042, guid: 16f90cd8d8b0842cab0612995d84965d,
     type: 2}
   DIAMETER: 0.1
-  STIFFNESS: 0.7
+  STIFFNESS: 0.9
+  PIN_POINT: {x: 0, y: 10, z: 0}
 --- !u!1 &1845267633
 GameObject:
   m_ObjectHideFlags: 0

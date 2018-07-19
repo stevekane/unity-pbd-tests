@@ -8,20 +8,21 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1071840678723114}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1071840678723114
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4408057948179392}
   - component: {fileID: 33887512927872156}
   - component: {fileID: 23972385744227284}
   - component: {fileID: 114987411872622042}
+  - component: {fileID: 135825659255650478}
   m_Layer: 0
   m_Name: AtomPrefab
   m_TagString: Untagged
@@ -32,11 +33,11 @@ GameObject:
 --- !u!4 &4408057948179392
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1071840678723114}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.633594, y: 0.5149807, z: -2.835182}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -45,7 +46,7 @@ Transform:
 --- !u!23 &23972385744227284
 MeshRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1071840678723114}
   m_Enabled: 1
@@ -80,14 +81,14 @@ MeshRenderer:
 --- !u!33 &33887512927872156
 MeshFilter:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1071840678723114}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &114987411872622042
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1071840678723114}
   m_Enabled: 1
@@ -95,7 +96,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec63058707b0e4223abfb67da1897ba9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  predicted: {x: 0, y: 0, z: 0}
-  velocity: {x: 0, y: 0, z: 0}
+  predicted:
+    x: 0
+    y: 0
+    z: 0
+  position:
+    x: 0
+    y: 0
+    z: 0
+  velocity:
+    x: 0
+    y: 0
+    z: 0
   inverseMass: 1
   diameter: 1
+--- !u!135 &135825659255650478
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1071840678723114}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

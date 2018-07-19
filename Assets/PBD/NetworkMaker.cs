@@ -10,6 +10,12 @@ public class NetworkMaker : MonoBehaviour
 	public Atom AtomPrefab;
 	public float DIAMETER = 1f;
 	public float STIFFNESS = 1f;
+	public Vector3 PIN_POINT = new Vector3(0, 10f, 0);
+
+	void Start()
+	{
+		Spawn();
+	}
 
 	[ContextMenu("Spawn")]
 	void Spawn()
@@ -34,6 +40,7 @@ public class NetworkMaker : MonoBehaviour
 		solver.atoms.Clear();
 		solver.positionConstraints.Clear();
 		solver.distanceConstraints.Clear();
+		solver.shapeConstraints.Clear();
 
 		// create all atoms that occupy unique positions
 		for (var i = 0; i < vertices.Length; i++)
@@ -51,12 +58,10 @@ public class NetworkMaker : MonoBehaviour
 			atom.predicted = Vector3.zero;
 			atom.name = i.ToString();
 			atom.diameter = DIAMETER;
+			atom.inverseMass = 1f;
 			solver.atoms.Add(atom);
 			positionToAtomMap.Add(modelSpacePosition, atom);
 		}
-
-		/* 
-		For use in old spring-network model
 
 		for (var i = 0; i < triangles.Length; i += 3)
 		{
@@ -77,10 +82,17 @@ public class NetworkMaker : MonoBehaviour
 			solver.distanceConstraints.Add(new DistanceConstraint() { a = a1, b = a3, distance = d2, stiffness = STIFFNESS });
 			solver.distanceConstraints.Add(new DistanceConstraint() { a = a2, b = a3, distance = d3, stiffness = STIFFNESS });
 		}
-		*/
 
 		var sc = new ShapeConstraint(solver.atoms, STIFFNESS);
 
 		solver.shapeConstraints.Add(sc);
+
+		solver.atoms[0].inverseMass = 1;
+		var pc = new PositionConstraint 
+		{ 
+			position = PIN_POINT,
+			a = solver.atoms[0]
+		};
+		solver.positionConstraints.Add(pc);
 	}
 }
