@@ -7,9 +7,7 @@ public class NetworkMaker : MonoBehaviour
 {
 	public Mesh mesh;
 	public Solver solver;
-
 	public Atom AtomPrefab;
-
 	public float DIAMETER = 1f;
 	public float STIFFNESS = 1f;
 
@@ -56,6 +54,10 @@ public class NetworkMaker : MonoBehaviour
 			solver.atoms.Add(atom);
 			positionToAtomMap.Add(modelSpacePosition, atom);
 		}
+
+		/* 
+		For use in old spring-network model
+
 		for (var i = 0; i < triangles.Length; i += 3)
 		{
 			var i1 = triangles[i + 0];
@@ -75,5 +77,10 @@ public class NetworkMaker : MonoBehaviour
 			solver.distanceConstraints.Add(new DistanceConstraint() { a = a1, b = a3, distance = d2, stiffness = STIFFNESS });
 			solver.distanceConstraints.Add(new DistanceConstraint() { a = a2, b = a3, distance = d3, stiffness = STIFFNESS });
 		}
+		*/
+
+		var sc = new ShapeConstraint(solver.atoms, STIFFNESS);
+
+		solver.shapeConstraints.Add(sc);
 	}
 }

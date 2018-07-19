@@ -40,12 +40,13 @@ public struct ShapeConstraint
 {
 	public Atom[] atoms;
 	public float stiffness;
-	public float3x3 invMassMatrix;
-	public float3 restCenterOfMass;
-	public float3[] restPositions;
+	float3x3 invMassMatrix;
+	float3 restCenterOfMass;
+	float3[] restPositions;
 
 	public ShapeConstraint(List<Atom> Atoms, float Stiffness)
 	{
+		int numAtoms = Atoms.Count;
 		float a00 = 0f;
 		float a01 = 0f;
 		float a02 = 0f; 
@@ -61,29 +62,20 @@ public struct ShapeConstraint
 		restCenterOfMass = Vector3.zero;
 		atoms = Atoms.ToArray();
 		stiffness = Stiffness;
-
-		// copy rest positions
 		restPositions = new float3[atoms.Length];
-		for (var i = 0; i < atoms.Length; i++)
-		{
-			restPositions[i] = atoms[i].position;
-		}
 
 		// compute center of mass of resting pose
 		foreach(var a in atoms)
 		{
-			restCenterOfMass += a.position * mass;
+			restCenterOfMass += float3(a.transform.position) * mass;
 			totalMass += mass;
 		}
 		restCenterOfMass /= totalMass;
 
 		// compute rest matrix
-		foreach (var p in restPositions)
+		for (var i = 0; i < numAtoms; i++)
 		{
-			float3 q = new float3(
-				p.x - restCenterOfMass.x, 
-				p.y - restCenterOfMass.y,
-				p.z - restCenterOfMass.z);
+			float3 q = float3(atoms[i].transform.position) - restCenterOfMass;
 
 			a00 += mass * q.x * q.x;
 			a01 += mass * q.x * q.y;
@@ -94,6 +86,7 @@ public struct ShapeConstraint
 			a20 += mass * q.z * q.x;
 			a21 += mass * q.z * q.y;
 			a22 += mass * q.z * q.z;
+			restPositions[i] = q;
 		}
 
 		float3x3 restMatrix = new float3x3(
@@ -102,11 +95,14 @@ public struct ShapeConstraint
 			a20, a21, a22
 		);
 
-		invMassMatrix = restMatrix.Inverse();
+		invMassMatrix = math.inverse(restMatrix);
 	}
 
 	public void Project(float invIterations)
 	{
+		const float epsilon = 1e-6f;
+
+		float k = 1f - Mathf.Pow(1f - stiffness, invIterations);
 		float totalMass = 0f;
 		float mass = 1f; // TODO: should be particle mass...
 		float3 centerOfMass = Vector3.zero;
@@ -146,21 +142,19 @@ public struct ShapeConstraint
 			a22 += mass * p.z * q.z;
 		}
 
-		float epsilon = 1e-6f;
 		float3x3 currentMatrix = new float3x3(
 			a00, a01, a02,
 			a10, a11, a12,
 			a20, a21, a22
 		);
-		float3x3 covarianceMatrix = currentMatrix.Multiply(invMassMatrix);
-		float3x3 rotationMatrix = covarianceMatrix.PolarDecomposition(epsilon);
+		float3x3 covarianceMatrix = math.mul(currentMatrix, invMassMatrix);
+		float3x3 rotationMatrix = UnityMathPolarDecomp.PolarDecomposition(covarianceMatrix, epsilon);
 
 		for (var i = 0; i < atoms.Length; i++)
 		{
-			float3 goal = centerOfMass + rotationMatrix.Multiply(restPositions[i]);		
+			float3 goal = centerOfMass + mul(rotationMatrix, restPositions[i]);		
 
-			// Debug.Log(goal.x + " " + goal.y + " " + goal.z);
-			// atoms[i].predicted += (goal - atoms[i].predicted) * stiffness;
+			atoms[i].predicted += (goal - atoms[i].predicted) * stiffness * k;
 		}
 	}
 }
@@ -250,12 +244,6 @@ public class Solver : MonoBehaviour
 			a.velocity = (a.predicted - a.position) * invdt;
 			a.position = a.predicted;
 			a.transform.position = a.position;
-		}
-
-		// DRAWDEBUG SHIT
-		foreach(var sc in shapeConstraints)
-		{
-			Debug.DrawLine(Vector3.zero, sc.restCenterOfMass, Color.green);
 		}
 	}
 }
